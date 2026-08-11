@@ -9,6 +9,7 @@ import '../../core/widgets/status_chip.dart';
 import 'route_overview_placeholder.dart';
 import 'stop_detail_screen.dart';
 import 'trip_models.dart';
+import 'trip_state.dart';
 
 class TripDetailScreen extends StatelessWidget {
   const TripDetailScreen({super.key, required this.trip});
@@ -17,6 +18,8 @@ class TripDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final trip = TripStore.instance.currentTrip;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(trip.tripId),
@@ -128,19 +131,11 @@ class TripDetailScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  stop.customerName,
+                                  '${stop.customerName}, ${stop.address}',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                   style:
                                       Theme.of(context).textTheme.titleMedium,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  stop.address,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                        color: AppColors.textSecondary,
-                                      ),
                                 ),
                               ],
                             ),
@@ -161,18 +156,24 @@ class TripDetailScreen extends StatelessWidget {
                       _InfoRow(label: 'Phone', value: stop.phoneNumber),
                       const SizedBox(height: AppSpacing.md),
                       SecondaryButton(
-                        label: 'Open Stop',
-                        icon: Icons.open_in_new,
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => StopDetailScreen(
-                                stop: stop,
-                                tripId: trip.tripId,
-                              ),
-                            ),
-                          );
-                        },
+                        label: trip.status == 'In Progress' || trip.status == 'Loading'
+                            ? 'Route Active'
+                            : 'Open Stop',
+                        icon: trip.status == 'In Progress' || trip.status == 'Loading'
+                            ? Icons.lock_outline
+                            : Icons.open_in_new,
+                        onPressed: trip.status == 'In Progress' || trip.status == 'Loading'
+                            ? null
+                            : () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => StopDetailScreen(
+                                      stop: stop,
+                                      tripId: trip.tripId,
+                                    ),
+                                  ),
+                                );
+                              },
                       ),
                     ],
                   ),

@@ -6,6 +6,11 @@ class HistoryEntry {
     required this.status,
     required this.kind,
     required this.tripId,
+    required this.products,
+    required this.address,
+    required this.signature,
+    required this.deliveryTime,
+    required this.receiptNumber,
   });
 
   final String title;
@@ -14,4 +19,9 @@ class HistoryEntry {
   final String status;
   final String kind;
   final String tripId;
+  final List<String> products;
+  final String address;
+  final String signature;
+  final String deliveryTime;
+  final String receiptNumber;
 }

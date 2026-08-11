@@ -7,9 +7,6 @@ import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/secondary_button.dart';
 import '../../core/widgets/section_title.dart';
 import '../../core/widgets/status_chip.dart';
-import '../delivery/delivery_models.dart';
-import '../delivery/failed_delivery_screen.dart';
-import '../delivery/successful_delivery_screen.dart';
 import 'trip_models.dart';
 
 class StopDetailScreen extends StatelessWidget {
@@ -85,46 +82,18 @@ class StopDetailScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: SecondaryButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => SuccessfulDeliveryScreen(
-                                  result: DeliveryResult(
-                                    tripId: tripId,
-                                    stopId: stop.stopId,
-                                    customerName: stop.customerName,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                          label: 'Complete Delivery',
-                        ),
+                  Container(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    decoration: BoxDecoration(
+                      color: AppColors.background,
+                      borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                    ),
+                    child: Text(
+                      'Use the route flow to complete or report this delivery after arriving at the stop.',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
                       ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: SecondaryButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => FailedDeliveryScreen(
-                                  result: DeliveryResult(
-                                    tripId: tripId,
-                                    stopId: stop.stopId,
-                                    customerName: stop.customerName,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                          label: 'Report Failure',
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),

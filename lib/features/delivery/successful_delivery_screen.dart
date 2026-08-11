@@ -4,9 +4,12 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/confirmation_dialog.dart';
-import '../../core/widgets/custom_textfield.dart';
 import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/section_title.dart';
+import '../history/history_state.dart';
+import '../home/home_shell.dart';
+import '../trips/trip_models.dart';
+import '../trips/trip_state.dart';
 import 'delivery_models.dart';
 
 class SuccessfulDeliveryScreen extends StatefulWidget {
@@ -22,18 +25,12 @@ class SuccessfulDeliveryScreen extends StatefulWidget {
 }
 
 class _SuccessfulDeliveryScreenState extends State<SuccessfulDeliveryScreen> {
-  final receiverController = TextEditingController();
-  final remarksController = TextEditingController();
-
-  @override
-  void dispose() {
-    receiverController.dispose();
-    remarksController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
+    final products = <TripProduct>[
+      const TripProduct(name: 'Standard delivery kit', quantity: 1),
+    ];
+
     return Scaffold(
       appBar: AppBar(title: const Text('Successful Delivery')),
       body: SafeArea(
@@ -53,11 +50,54 @@ class _SuccessfulDeliveryScreenState extends State<SuccessfulDeliveryScreen> {
                         ),
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  Text('Receiver Name', style: Theme.of(context).textTheme.titleSmall),
+                  Text('Items to hand over', style: Theme.of(context).textTheme.titleSmall),
                   const SizedBox(height: AppSpacing.xs),
-                  CustomTextField(
-                    controller: receiverController,
-                    hintText: 'Enter receiver name',
+                  ...products.map(
+                    (product) => Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(AppSpacing.md),
+                        decoration: BoxDecoration(
+                          color: AppColors.background,
+                          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.inventory_2_outlined,
+                              color: AppColors.primary,
+                            ),
+                            const SizedBox(width: AppSpacing.md),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    product.name,
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'Qty: ${product.quantity}',
+                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(
+                              Icons.check_circle_outline,
+                              color: AppColors.success,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Text('Photo Placeholder', style: Theme.of(context).textTheme.titleSmall),
@@ -74,11 +114,20 @@ class _SuccessfulDeliveryScreenState extends State<SuccessfulDeliveryScreen> {
                     child: const Icon(Icons.photo_camera_outlined, size: 36),
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  Text('Remarks', style: Theme.of(context).textTheme.titleSmall),
+                  Text('Delivery note', style: Theme.of(context).textTheme.titleSmall),
                   const SizedBox(height: AppSpacing.xs),
-                  CustomTextField(
-                    controller: remarksController,
-                    hintText: 'Add remarks if needed',
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    decoration: BoxDecoration(
+                      color: AppColors.background,
+                      borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: const Text(
+                      'All required items are ready to be handed over to the customer.',
+                      style: TextStyle(color: AppColors.textSecondary),
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Container(
@@ -123,7 +172,16 @@ class _SuccessfulDeliveryScreenState extends State<SuccessfulDeliveryScreen> {
                         return;
                       }
 
+                      TripStore.instance.completeCurrentStop(widget.result.stopId);
+                      HistoryStore.instance.addDeliveredStop(
+                        TripStore.instance.currentTrip,
+                        widget.result.stopId,
+                      );
                       navigator.pop();
+                      navigator.pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => const HomeShell()),
+                        (route) => false,
+                      );
                       messenger.showSnackBar(
                         const SnackBar(content: Text('Delivery submitted')),
                       );

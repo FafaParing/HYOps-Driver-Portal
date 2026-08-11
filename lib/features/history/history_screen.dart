@@ -6,8 +6,8 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/section_title.dart';
 import '../../core/widgets/status_chip.dart';
-import 'history_mock_data.dart';
 import 'history_models.dart';
+import 'history_state.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -92,71 +92,81 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ...filteredEntries.map(
               (entry) => Padding(
                 padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                child: AppCard(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: entry.kind == 'completed'
-                              ? AppColors.success.withValues(alpha: 0.12)
-                              : AppColors.danger.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                        ),
-                        child: Icon(
-                          entry.kind == 'completed'
-                              ? Icons.check_circle_outline
-                              : Icons.error_outline,
-                          color: entry.kind == 'completed'
-                              ? AppColors.success
-                              : AppColors.danger,
-                        ),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => _HistoryReceiptScreen(entry: entry),
                       ),
-                      const SizedBox(width: AppSpacing.md),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    entry.title,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall,
+                    );
+                  },
+                  child: AppCard(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: entry.kind == 'completed'
+                                ? AppColors.success.withValues(alpha: 0.12)
+                                : AppColors.danger.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                          ),
+                          child: Icon(
+                            entry.kind == 'completed'
+                                ? Icons.check_circle_outline
+                                : Icons.error_outline,
+                            color: entry.kind == 'completed'
+                                ? AppColors.success
+                                : AppColors.danger,
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      entry.title,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall,
+                                    ),
                                   ),
-                                ),
-                                StatusChip(
-                                  label: entry.status,
-                                  variant: entry.kind == 'completed'
-                                      ? StatusChipVariant.success
-                                      : StatusChipVariant.danger,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              entry.subtitle,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(color: AppColors.textSecondary),
-                            ),
-                            const SizedBox(height: AppSpacing.xs),
-                            Text(
-                              'Trip ${entry.tripId} • ${entry.dateLabel}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(color: AppColors.textSecondary),
-                            ),
-                          ],
+                                  StatusChip(
+                                    label: entry.status,
+                                    variant: entry.kind == 'completed'
+                                        ? StatusChipVariant.success
+                                        : StatusChipVariant.danger,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                entry.subtitle,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(color: AppColors.textSecondary),
+                              ),
+                              const SizedBox(height: AppSpacing.xs),
+                              Text(
+                                'Trip ${entry.tripId} • ${entry.dateLabel}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(color: AppColors.textSecondary),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -169,7 +179,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   List<HistoryEntry> _filteredEntries() {
     final query = searchController.text.trim().toLowerCase();
 
-    return mockHistoryEntries.where((entry) {
+    return HistoryStore.instance.entries.where((entry) {
       final matchesFilter = switch (selectedFilter) {
         'Today' => entry.dateLabel.toLowerCase().contains('today'),
         'Week' => entry.dateLabel.toLowerCase().contains('today') ||
@@ -186,5 +196,111 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
       return matchesFilter && matchesQuery;
     }).toList();
+  }
+}
+
+class _HistoryReceiptScreen extends StatelessWidget {
+  const _HistoryReceiptScreen({required this.entry});
+
+  final HistoryEntry entry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Delivery Receipt')),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          children: [
+            AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          entry.title,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      ),
+                      StatusChip(
+                        label: entry.status,
+                        variant: entry.kind == 'completed'
+                            ? StatusChipVariant.success
+                            : StatusChipVariant.danger,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    'Receipt ${entry.receiptNumber}',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  _ReceiptRow(label: 'Trip ID', value: entry.tripId),
+                  _ReceiptRow(label: 'Address', value: entry.address),
+                  _ReceiptRow(label: 'Time', value: entry.deliveryTime),
+                  _ReceiptRow(label: 'Signature', value: entry.signature),
+                  const SizedBox(height: AppSpacing.md),
+                  Text('Items', style: Theme.of(context).textTheme.titleSmall),
+                  const SizedBox(height: AppSpacing.sm),
+                  ...entry.products.map(
+                    (product) => Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.inventory_2_outlined, size: 18),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(child: Text(product)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ReceiptRow extends StatelessWidget {
+  const _ReceiptRow({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
