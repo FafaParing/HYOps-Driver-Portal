@@ -243,7 +243,6 @@ class _HistoryReceiptScreen extends StatelessWidget {
                   _ReceiptRow(label: 'Trip ID', value: entry.tripId),
                   _ReceiptRow(label: 'Address', value: entry.address),
                   _ReceiptRow(label: 'Time', value: entry.deliveryTime),
-                  _ReceiptRow(label: 'Signature', value: entry.signature),
                   const SizedBox(height: AppSpacing.md),
                   Text('Items', style: Theme.of(context).textTheme.titleSmall),
                   const SizedBox(height: AppSpacing.sm),

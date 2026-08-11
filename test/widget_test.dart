@@ -1,30 +1,52 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:hyops_driver_portal/main.dart';
+import 'package:hyops_driver_portal/features/trips/navigation_screen.dart';
+import 'package:hyops_driver_portal/features/trips/trip_models.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const HYOpsDriverApp());
+  testWidgets('Navigation info pill wraps long addresses without overflow', (tester) async {
+    final trip = TripDetail(
+      tripId: 'T-100',
+      status: 'In Progress',
+      assignedTruck: 'Truck 1',
+      driverName: 'Driver',
+      totalStops: 1,
+      completedStops: 0,
+      currentStop: 'Stop 1',
+      remainingStops: 1,
+      progress: 0.5,
+      nextStop: 'Stop 1',
+      warehouse: 'Warehouse A',
+      stops: [
+        TripStop(
+          stopId: 'S-1',
+          customerName: 'Alex',
+          contactPerson: 'Alex',
+          phoneNumber: '0123456789',
+          address:
+              'Lot 12, North Market Avenue, Taman Tunam, Kuala Lumpur, Malaysia, very long address that should wrap instead of overflowing',
+          distance: '3 km',
+          status: 'Pending',
+          deliveryNumber: 'D-1',
+          invoiceNumber: 'INV-1',
+          products: const [],
+        ),
+      ],
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: NavigationScreen(trip: trip),
+      ),
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    await tester.tap(find.text('Start Route'));
+    await tester.pumpAndSettle();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    
+
+    final flexible = tester.widget<Flexible>(find.byType(Flexible).first);
+    expect(flexible.fit, FlexFit.loose);
   });
 }

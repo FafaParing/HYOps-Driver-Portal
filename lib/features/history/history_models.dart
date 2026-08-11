@@ -8,7 +8,6 @@ class HistoryEntry {
     required this.tripId,
     required this.products,
     required this.address,
-    required this.signature,
     required this.deliveryTime,
     required this.receiptNumber,
   });
@@ -21,7 +20,6 @@ class HistoryEntry {
   final String tripId;
   final List<String> products;
   final String address;
-  final String signature;
   final String deliveryTime;
   final String receiptNumber;
 }

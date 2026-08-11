@@ -79,6 +79,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                       ],
                     ),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Column(
@@ -99,6 +100,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
                                     : _routeStarted
                                         ? 'Driving to ${nextStop?.address ?? trip.nextStop}'
                                         : 'Tap start when you are ready to go.',
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: AppColors.textSecondary,
                                 ),
@@ -106,19 +109,22 @@ class _NavigationScreenState extends State<NavigationScreen> {
                             ],
                           ),
                         ),
-                        StatusChip(
-                          label: _arrived
-                              ? 'Arrived'
-                              : _routeStarted
-                                  ? 'Active'
-                                  : _statusLabel,
-                          variant: _arrived || _routeStarted
-                              ? StatusChipVariant.success
-                              : _statusLabel == 'Completed'
-                                  ? StatusChipVariant.success
-                                  : _statusLabel == 'Loading'
-                                      ? StatusChipVariant.warning
-                                      : StatusChipVariant.info,
+                        const SizedBox(width: AppSpacing.sm),
+                        Flexible(
+                          child: StatusChip(
+                            label: _arrived
+                                ? 'Arrived'
+                                : _routeStarted
+                                    ? 'Active'
+                                    : _statusLabel,
+                            variant: _arrived || _routeStarted
+                                ? StatusChipVariant.success
+                                : _statusLabel == 'Completed'
+                                    ? StatusChipVariant.success
+                                    : _statusLabel == 'Loading'
+                                        ? StatusChipVariant.warning
+                                        : StatusChipVariant.info,
+                          ),
                         ),
                       ],
                     ),
@@ -126,11 +132,11 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   if (_routeStarted && !_arrived)
                     Padding(
                       padding: const EdgeInsets.only(top: AppSpacing.sm),
-                      child: Row(
+                      child: Wrap(
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.sm,
                         children: [
                           _InfoPill(label: 'ETA', value: '8 min'),
-                          const SizedBox(width: AppSpacing.sm),
-                          _InfoPill(label: 'Next', value: nextStop?.address ?? trip.nextStop),
                         ],
                       ),
                     ),
@@ -221,30 +227,35 @@ class _InfoPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 10),
-      decoration: BoxDecoration(
-        color: AppColors.background,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w600,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 240),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 10),
+        decoration: BoxDecoration(
+          color: AppColors.background,
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w700,
+            const SizedBox(height: 2),
+            Text(
+              value,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

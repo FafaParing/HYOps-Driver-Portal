@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/app_card.dart';
 import '../../core/widgets/confirmation_dialog.dart';
 import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/section_title.dart';
@@ -37,11 +36,10 @@ class _SuccessfulDeliveryScreenState extends State<SuccessfulDeliveryScreen> {
         child: ListView(
           padding: const EdgeInsets.all(AppSpacing.md),
           children: [
-            AppCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SectionTitle(title: widget.result.customerName),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SectionTitle(title: widget.result.customerName),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
                     'Trip ${widget.result.tripId} • ${widget.result.stopId}',
@@ -100,36 +98,6 @@ class _SuccessfulDeliveryScreenState extends State<SuccessfulDeliveryScreen> {
                     ),
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  Text('Photo Placeholder', style: Theme.of(context).textTheme.titleSmall),
-                  const SizedBox(height: AppSpacing.xs),
-                  Container(
-                    width: double.infinity,
-                    height: 160,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: AppColors.background,
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                      border: Border.all(color: AppColors.border),
-                    ),
-                    child: const Icon(Icons.photo_camera_outlined, size: 36),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  Text('Delivery note', style: Theme.of(context).textTheme.titleSmall),
-                  const SizedBox(height: AppSpacing.xs),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    decoration: BoxDecoration(
-                      color: AppColors.background,
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                      border: Border.all(color: AppColors.border),
-                    ),
-                    child: const Text(
-                      'All required items are ready to be handed over to the customer.',
-                      style: TextStyle(color: AppColors.textSecondary),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(AppSpacing.md),
@@ -144,9 +112,7 @@ class _SuccessfulDeliveryScreenState extends State<SuccessfulDeliveryScreen> {
                         SizedBox(height: 4),
                         Text('2026-07-21 10:45 AM'),
                         SizedBox(height: AppSpacing.sm),
-                        Text('GPS', style: TextStyle(fontWeight: FontWeight.w600)),
-                        SizedBox(height: 4),
-                        Text('3.1493, 101.6958'),
+                        
                       ],
                     ),
                   ),
@@ -189,7 +155,6 @@ class _SuccessfulDeliveryScreenState extends State<SuccessfulDeliveryScreen> {
                   ),
                 ],
               ),
-            ),
           ],
         ),
       ),

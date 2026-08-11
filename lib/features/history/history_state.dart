@@ -16,7 +16,6 @@ class HistoryStore {
       tripId: 'TRP-2026-070',
       products: ['Glucose Meter', 'Test Strips'],
       address: 'City Center Boulevard 9',
-      signature: 'Signed by Lina Ho',
       deliveryTime: '09:30',
       receiptNumber: 'RCPT-1001',
     ),
@@ -35,7 +34,6 @@ class HistoryStore {
         tripId: 'TRP-2026-070',
         products: ['Glucose Meter', 'Test Strips'],
         address: 'City Care Clinic, 9 Boulevard Avenue, Downtown Kuala Lumpur',
-        signature: 'Signed by Lina Ho',
         deliveryTime: '09:30',
         receiptNumber: 'RCPT-1001',
       ),
@@ -57,7 +55,6 @@ class HistoryStore {
       tripId: trip.tripId,
       products: stop.products.map((product) => '${product.name} x${product.quantity}').toList(),
       address: stop.address,
-      signature: 'Signed by ${stop.contactPerson}',
       deliveryTime: 'Now',
       receiptNumber: 'RCPT-${trip.tripId.split('-').last}',
     );
