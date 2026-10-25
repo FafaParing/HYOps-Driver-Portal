@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/secondary_button.dart';
 import '../../core/widgets/section_title.dart';
 import '../../core/widgets/status_chip.dart';
 import 'route_overview_placeholder.dart';
-import 'stop_detail_screen.dart';
 import 'trip_models.dart';
 
 class TripDetailScreen extends StatelessWidget {
@@ -20,9 +18,7 @@ class TripDetailScreen extends StatelessWidget {
     final trip = this.trip;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(trip.tripId),
-      ),
+      appBar: AppBar(title: Text(trip.tripId)),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(AppSpacing.md),
@@ -44,9 +40,7 @@ class TripDetailScreen extends StatelessWidget {
                             const SizedBox(height: 4),
                             Text(
                               'Driver ${trip.driverName} • ${trip.assignedTruck}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
+                              style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(color: AppColors.textSecondary),
                             ),
                           ],
@@ -57,8 +51,8 @@ class TripDetailScreen extends StatelessWidget {
                         variant: trip.status == 'Completed'
                             ? StatusChipVariant.success
                             : trip.status == 'Loading'
-                                ? StatusChipVariant.warning
-                                : StatusChipVariant.info,
+                            ? StatusChipVariant.warning
+                            : StatusChipVariant.info,
                       ),
                     ],
                   ),
@@ -68,7 +62,8 @@ class TripDetailScreen extends StatelessWidget {
                   _InfoRow(label: 'Next Stop', value: trip.nextStop),
                   _InfoRow(
                     label: 'Stops',
-                    value: '${trip.completedStops}/${trip.totalStops} completed',
+                    value:
+                        '${trip.completedStops}/${trip.totalStops} completed',
                   ),
                   const SizedBox(height: AppSpacing.md),
                   LinearProgressIndicator(
@@ -80,8 +75,8 @@ class TripDetailScreen extends StatelessWidget {
                   Text(
                     '${(trip.progress * 100).round()}% trip progress',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -96,11 +91,12 @@ class TripDetailScreen extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  _TimelineStep(label: 'Assigned', isDone: true),
-                  _TimelineStep(label: 'Accepted', isDone: true),
-                  _TimelineStep(label: 'Loading', isDone: trip.progress > 0),
-                  _TimelineStep(label: 'In Progress', isDone: trip.progress > 0.2),
-                  _TimelineStep(label: 'Completed', isDone: trip.progress >= 1),
+                  ...DeliveryWorkflowState.values.map(
+                    (state) => _TimelineStep(
+                      label: state.label,
+                      isDone: _isWorkflowStepDone(trip.workflowState, state),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -111,10 +107,7 @@ class TripDetailScreen extends StatelessWidget {
               stopCount: trip.totalStops,
             ),
             const SizedBox(height: AppSpacing.md),
-            SectionTitle(
-              title: 'Stop List',
-              actionLabel: null,
-            ),
+            SectionTitle(title: 'Stop List', actionLabel: null),
             const SizedBox(height: AppSpacing.sm),
             ...trip.stops.map(
               (stop) => Padding(
@@ -133,8 +126,9 @@ class TripDetailScreen extends StatelessWidget {
                                   '${stop.customerName}, ${stop.address}',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium,
                                 ),
                               ],
                             ),
@@ -144,8 +138,8 @@ class TripDetailScreen extends StatelessWidget {
                             variant: stop.status == 'Delivered'
                                 ? StatusChipVariant.success
                                 : stop.status == 'Failed'
-                                    ? StatusChipVariant.danger
-                                    : StatusChipVariant.info,
+                                ? StatusChipVariant.danger
+                                : StatusChipVariant.info,
                           ),
                         ],
                       ),
@@ -153,27 +147,6 @@ class TripDetailScreen extends StatelessWidget {
                       _InfoRow(label: 'Distance', value: stop.distance),
                       _InfoRow(label: 'Contact', value: stop.contactPerson),
                       _InfoRow(label: 'Phone', value: stop.phoneNumber),
-                      const SizedBox(height: AppSpacing.md),
-                      SecondaryButton(
-                        label: trip.status == 'In Progress' || trip.status == 'Loading'
-                            ? 'Route Active'
-                            : 'Open Stop',
-                        icon: trip.status == 'In Progress' || trip.status == 'Loading'
-                            ? Icons.lock_outline
-                            : Icons.open_in_new,
-                        onPressed: trip.status == 'In Progress' || trip.status == 'Loading'
-                            ? null
-                            : () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => StopDetailScreen(
-                                      stop: stop,
-                                      tripId: trip.tripId,
-                                    ),
-                                  ),
-                                );
-                              },
-                      ),
                     ],
                   ),
                 ),
@@ -184,6 +157,20 @@ class TripDetailScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+bool _isWorkflowStepDone(
+  DeliveryWorkflowState current,
+  DeliveryWorkflowState step,
+) {
+  if (current == DeliveryWorkflowState.failed ||
+      current == DeliveryWorkflowState.cancelled) {
+    return step == current ||
+        DeliveryWorkflowState.values.indexOf(step) <
+            DeliveryWorkflowState.values.indexOf(current);
+  }
+  return DeliveryWorkflowState.values.indexOf(step) <=
+      DeliveryWorkflowState.values.indexOf(current);
 }
 
 class _InfoRow extends StatelessWidget {
@@ -202,9 +189,9 @@ class _InfoRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
             ),
           ),
           const SizedBox(width: AppSpacing.md),
@@ -212,9 +199,9 @@ class _InfoRow extends StatelessWidget {
             child: Text(
               value,
               textAlign: TextAlign.end,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -240,17 +227,14 @@ class _TimelineStep extends StatelessWidget {
           Container(
             width: 12,
             height: 12,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
           const SizedBox(width: AppSpacing.sm),
           Text(
             label,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: isDone ? FontWeight.w600 : FontWeight.w400,
-                ),
+              fontWeight: isDone ? FontWeight.w600 : FontWeight.w400,
+            ),
           ),
         ],
       ),

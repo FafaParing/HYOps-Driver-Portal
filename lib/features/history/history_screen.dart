@@ -35,7 +35,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
         return SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final horizontalPadding = constraints.maxWidth < 400 ? 12.0 : 20.0;
+              final horizontalPadding = constraints.maxWidth < 400
+                  ? 12.0
+                  : 20.0;
               final contentWidth = constraints.maxWidth > 760
                   ? 720.0
                   : constraints.maxWidth - (horizontalPadding * 2);
@@ -103,159 +105,156 @@ class _HistoryScreenState extends State<HistoryScreen> {
       return matchesFilter && matchesQuery;
     }).toList();
   }
-
 }
 
 class _HistoryContent extends StatelessWidget {
-    const _HistoryContent({
-      required this.filteredEntries,
-      required this.searchController,
-      required this.selectedFilter,
-      required this.onFilterChanged,
-      required this.onSearchChanged,
-      required this.onClear,
-    });
+  const _HistoryContent({
+    required this.filteredEntries,
+    required this.searchController,
+    required this.selectedFilter,
+    required this.onFilterChanged,
+    required this.onSearchChanged,
+    required this.onClear,
+  });
 
-    final List<HistoryEntry> filteredEntries;
-    final TextEditingController searchController;
-    final String selectedFilter;
-    final ValueChanged<String> onFilterChanged;
-    final VoidCallback onSearchChanged;
-    final VoidCallback onClear;
+  final List<HistoryEntry> filteredEntries;
+  final TextEditingController searchController;
+  final String selectedFilter;
+  final ValueChanged<String> onFilterChanged;
+  final VoidCallback onSearchChanged;
+  final VoidCallback onClear;
 
-    @override
-    Widget build(BuildContext context) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('History', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: AppSpacing.lg),
-          SearchBar(
-            controller: searchController,
-            hintText: 'Search trips, stops, or trip IDs',
-            leading: const Icon(Icons.search),
-            onChanged: (_) => onSearchChanged(),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: ['Today', 'Week', 'Month']
-                .map(
-                  (filter) => ChoiceChip(
-                    label: Text(filter),
-                    selected: selectedFilter == filter,
-                    onSelected: (_) => onFilterChanged(filter),
-                  ),
-                )
-                .toList(),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          SectionTitle(
-            title: '${filteredEntries.length} results',
-            actionLabel: 'Clear',
-            onActionTap: onClear,
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          if (filteredEntries.isEmpty)
-            const EmptyState(
-              title: 'No history found',
-              message: 'Try another search or time filter.',
-              icon: Icons.history_outlined,
-            )
-          else
-            ...filteredEntries.map(
-              (entry) => Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                child: _HistoryEntryCard(entry: entry),
-              ),
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('History', style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: AppSpacing.lg),
+        SearchBar(
+          controller: searchController,
+          hintText: 'Search trips, stops, or trip IDs',
+          leading: const Icon(Icons.search),
+          onChanged: (_) => onSearchChanged(),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: ['Today', 'Week', 'Month']
+              .map(
+                (filter) => ChoiceChip(
+                  label: Text(filter),
+                  selected: selectedFilter == filter,
+                  onSelected: (_) => onFilterChanged(filter),
+                ),
+              )
+              .toList(),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        SectionTitle(
+          title: '${filteredEntries.length} results',
+          actionLabel: 'Clear',
+          onActionTap: onClear,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        if (filteredEntries.isEmpty)
+          const EmptyState(
+            title: 'No history found',
+            message: 'Try another search or time filter.',
+            icon: Icons.history_outlined,
+          )
+        else
+          ...filteredEntries.map(
+            (entry) => Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+              child: _HistoryEntryCard(entry: entry),
             ),
-        ],
-      );
-    }
+          ),
+      ],
+    );
   }
+}
 
 class _HistoryEntryCard extends StatelessWidget {
-    const _HistoryEntryCard({required this.entry});
+  const _HistoryEntryCard({required this.entry});
 
-    final HistoryEntry entry;
+  final HistoryEntry entry;
 
-    @override
-    Widget build(BuildContext context) {
-      return InkWell(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => _HistoryReceiptScreen(entry: entry),
-            ),
-          );
-        },
-        child: AppCard(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: entry.kind == 'completed'
-                      ? AppColors.success.withValues(alpha: 0.12)
-                      : AppColors.danger.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                ),
-                child: Icon(
-                  entry.kind == 'completed'
-                      ? Icons.check_circle_outline
-                      : Icons.error_outline,
-                  color: entry.kind == 'completed'
-                      ? AppColors.success
-                      : AppColors.danger,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      entry.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                    const SizedBox(height: 6),
-                    StatusChip(
-                      label: entry.status,
-                      variant: entry.kind == 'completed'
-                          ? StatusChipVariant.success
-                          : StatusChipVariant.danger,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      entry.subtitle,
-                      softWrap: true,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(color: AppColors.textSecondary),
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    Text(
-                      'Trip ${entry.tripId} • ${entry.dateLabel}',
-                      softWrap: true,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(color: AppColors.textSecondary),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => _HistoryReceiptScreen(entry: entry),
           ),
+        );
+      },
+      child: AppCard(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: entry.kind == 'completed'
+                    ? AppColors.success.withValues(alpha: 0.12)
+                    : AppColors.danger.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+              ),
+              child: Icon(
+                entry.kind == 'completed'
+                    ? Icons.check_circle_outline
+                    : Icons.error_outline,
+                color: entry.kind == 'completed'
+                    ? AppColors.success
+                    : AppColors.danger,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    entry.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                  const SizedBox(height: 6),
+                  StatusChip(
+                    label: entry.status,
+                    variant: entry.kind == 'completed'
+                        ? StatusChipVariant.success
+                        : StatusChipVariant.danger,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    entry.subtitle,
+                    softWrap: true,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    'Trip ${entry.tripId} • ${entry.dateLabel}',
+                    softWrap: true,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-      );
+      ),
+    );
   }
 }
 
@@ -314,12 +313,7 @@ class _HistoryReceiptScreen extends StatelessWidget {
                         children: [
                           const Icon(Icons.inventory_2_outlined, size: 18),
                           const SizedBox(width: AppSpacing.sm),
-                          Expanded(
-                            child: Text(
-                              product,
-                              softWrap: true,
-                            ),
-                          ),
+                          Expanded(child: Text(product, softWrap: true)),
                         ],
                       ),
                     ),

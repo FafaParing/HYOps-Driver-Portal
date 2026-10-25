@@ -30,13 +30,20 @@ class ConfirmationDialog extends StatelessWidget {
         AppSpacing.md,
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(cancelLabel),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(cancelLabel),
+          ),
         ),
-        ElevatedButton(
-          onPressed: onConfirm,
-          child: Text(confirmLabel),
+        const SizedBox(height: AppSpacing.xs),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: onConfirm,
+            child: Text(confirmLabel),
+          ),
         ),
       ],
     );
