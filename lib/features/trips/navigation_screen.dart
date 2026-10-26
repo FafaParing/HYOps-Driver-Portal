@@ -223,6 +223,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
                                 stopId: nextStop?.stopId ?? 'N/A',
                                 customerName:
                                     nextStop?.customerName ?? 'Customer',
+                                receiverName:
+                                    nextStop?.contactPerson ?? 'Not provided',
+                                products: nextStop?.products ?? const [],
                               ),
                             ),
                           ),
@@ -349,7 +352,11 @@ class _NavigationScreenState extends State<NavigationScreen> {
       stopId: stop.stopId,
     );
     navigator.pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const HomeShell()),
+      MaterialPageRoute(
+        builder: (context) => HomeShell(
+          notificationMessage: 'Delivery cancelled for ${stop.customerName}.',
+        ),
+      ),
       (route) => false,
     );
   }

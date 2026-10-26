@@ -16,8 +16,10 @@ class HistoryStore extends ChangeNotifier {
       status: 'Completed',
       kind: 'completed',
       tripId: 'TRP-2026-070',
-      products: ['Glucose Meter', 'Test Strips'],
+      receiverName: 'Lina Ho',
+      products: ['Glucose Meter x1 pcs', 'Test Strips x20 pcs'],
       address: 'City Center Boulevard 9',
+      deliveryDate: '2026-10-26',
       deliveryTime: '09:30',
       receiptNumber: 'RCPT-1001',
     ),
@@ -34,8 +36,10 @@ class HistoryStore extends ChangeNotifier {
         status: 'Completed',
         kind: 'completed',
         tripId: 'TRP-2026-070',
-        products: ['Glucose Meter', 'Test Strips'],
+        receiverName: 'Lina Ho',
+        products: ['Glucose Meter x1 pcs', 'Test Strips x20 pcs'],
         address: 'City Care Clinic, 9 Boulevard Avenue, Downtown Kuala Lumpur',
+        deliveryDate: '2026-10-26',
         deliveryTime: '09:30',
         receiptNumber: 'RCPT-1001',
       ),
@@ -51,13 +55,18 @@ class HistoryStore extends ChangeNotifier {
 
     final entry = HistoryEntry(
       title: stop.customerName,
-      subtitle: 'Delivered ${stop.products.fold<int>(0, (sum, product) => sum + product.quantity)} products',
+      subtitle:
+          'Delivered ${stop.products.fold<int>(0, (sum, product) => sum + product.quantity)} products',
       dateLabel: 'Today',
       status: 'Completed',
       kind: 'completed',
       tripId: trip.tripId,
-      products: stop.products.map((product) => '${product.name} x${product.quantity}').toList(),
+      receiverName: stop.contactPerson,
+      products: stop.products
+          .map((product) => '${product.name} x${product.quantity} ${product.unit}')
+          .toList(),
       address: stop.address,
+      deliveryDate: '2026-10-26',
       deliveryTime: 'Now',
       receiptNumber: 'RCPT-${trip.tripId.split('-').last}',
     );
@@ -83,10 +92,12 @@ class HistoryStore extends ChangeNotifier {
       status: 'Cancelled',
       kind: 'cancelled',
       tripId: trip.tripId,
+      receiverName: stop.contactPerson,
       products: stop.products
-          .map((product) => '${product.name} x${product.quantity}')
+          .map((product) => '${product.name} x${product.quantity} ${product.unit}')
           .toList(),
       address: stop.address,
+      deliveryDate: '2026-10-26',
       deliveryTime: 'Now',
       receiptNumber: 'CANCEL-${trip.tripId.split('-').last}',
       reason: reason,

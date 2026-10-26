@@ -6,12 +6,14 @@ const mockTrips = [
     status: 'In Progress',
     assignedTruck: 'Truck 1',
     driverName: 'Ivan Paring',
-    totalStops: 7,
+    totalStops: 4,
     completedStops: 3,
-    currentStop: 'Greenfield Pharmacy, 88 Jalan Sentral 8, Bandar Putra, Kuala Lumpur',
-    remainingStops: 4,
-    progress: 0.43,
-    nextStop: 'Greenfield Pharmacy, 88 Jalan Sentral 8, Bandar Putra, Kuala Lumpur',
+    currentStop:
+        'Greenfield Pharmacy, 88 Jalan Sentral 8, Bandar Putra, Kuala Lumpur',
+    remainingStops: 1,
+    progress: 0.75,
+    nextStop:
+        'Greenfield Pharmacy, 88 Jalan Sentral 8, Bandar Putra, Kuala Lumpur',
     warehouse: 'Depot A - North Logistics',
     stops: [
       TripStop(
@@ -25,9 +27,9 @@ const mockTrips = [
         deliveryNumber: 'DN-2201',
         invoiceNumber: 'INV-4401',
         products: [
-          TripProduct(name: 'Tarpaulin (Blue)', quantity: 2),
-          TripProduct(name: 'Gloves', quantity: 10),
-          TripProduct(name: 'Alcohol Swabs', quantity: 5),
+          TripProduct(name: 'Tarpaulin (Blue)', quantity: 2, unit: 'rolls'),
+          TripProduct(name: 'Gloves', quantity: 10, unit: 'boxes'),
+          TripProduct(name: 'Alcohol Swabs', quantity: 5, unit: 'boxes'),
         ],
       ),
       TripStop(
@@ -41,8 +43,8 @@ const mockTrips = [
         deliveryNumber: 'DN-2202',
         invoiceNumber: 'INV-4402',
         products: [
-          TripProduct(name: 'Vitamin C', quantity: 3),
-          TripProduct(name: 'Paracetamol', quantity: 4),
+          TripProduct(name: 'Vitamin C', quantity: 3, unit: 'boxes'),
+          TripProduct(name: 'Paracetamol', quantity: 4, unit: 'boxes'),
         ],
       ),
       TripStop(
@@ -56,9 +58,9 @@ const mockTrips = [
         deliveryNumber: 'DN-2203',
         invoiceNumber: 'INV-4403',
         products: [
-          TripProduct(name: 'Bandages', quantity: 6),
-          TripProduct(name: 'Saline', quantity: 2),
-          TripProduct(name: 'Face Masks', quantity: 12),
+          TripProduct(name: 'Bandages', quantity: 6, unit: 'boxes'),
+          TripProduct(name: 'Saline', quantity: 2, unit: 'boxes'),
+          TripProduct(name: 'Face Masks', quantity: 12, unit: 'boxes'),
         ],
       ),
       TripStop(
@@ -66,21 +68,22 @@ const mockTrips = [
         customerName: 'Greenfield Pharmacy',
         contactPerson: 'Ong Mei Ling',
         phoneNumber: '+60 12-345 4433',
-        address: 'Greenfield Pharmacy, 88 Jalan Sentral 8, Bandar Putra, Kuala Lumpur',
+        address:
+            'Greenfield Pharmacy, 88 Jalan Sentral 8, Bandar Putra, Kuala Lumpur',
         distance: '8.6 km',
         status: 'Navigating',
         deliveryNumber: 'DN-2204',
         invoiceNumber: 'INV-4404',
         products: [
-          TripProduct(name: 'Cough Syrup', quantity: 1),
-          TripProduct(name: 'Thermometer', quantity: 2),
+          TripProduct(name: 'Cough Syrup', quantity: 1, unit: 'bottle'),
+          TripProduct(name: 'Thermometer', quantity: 2, unit: 'pcs'),
         ],
       ),
     ],
   ),
   TripDetail(
     tripId: 'TRP-2026-072',
-    status: 'Loading',
+    status: 'Ready to ship',
     assignedTruck: 'TRK-21',
     driverName: 'Michael Tan',
     totalStops: 1,
@@ -102,8 +105,8 @@ const mockTrips = [
         deliveryNumber: 'DN-2231',
         invoiceNumber: 'INV-4412',
         products: [
-          TripProduct(name: 'Glucose Meter', quantity: 1),
-          TripProduct(name: 'Test Strips', quantity: 20),
+          TripProduct(name: 'Glucose Meter', quantity: 1, unit: 'pcs'),
+          TripProduct(name: 'Test Strips', quantity: 20, unit: 'pcs'),
         ],
       ),
     ],
@@ -132,8 +135,8 @@ const mockTrips = [
         deliveryNumber: 'DN-2188',
         invoiceNumber: 'INV-4390',
         products: [
-          TripProduct(name: 'Reagent Set', quantity: 2),
-          TripProduct(name: 'Sample Tubes', quantity: 24),
+          TripProduct(name: 'Reagent Set', quantity: 2, unit: 'boxes'),
+          TripProduct(name: 'Sample Tubes', quantity: 24, unit: 'pcs'),
         ],
       ),
     ],

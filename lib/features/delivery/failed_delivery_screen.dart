@@ -119,7 +119,11 @@ class _FailedDeliveryScreenState extends State<FailedDeliveryScreen> {
                       }
 
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Failed delivery submitted')),
+                        SnackBar(
+                          content: Text(
+                            'Delivery failed for ${widget.result.customerName}.',
+                          ),
+                        ),
                       );
                       Navigator.of(context).pop();
                     },

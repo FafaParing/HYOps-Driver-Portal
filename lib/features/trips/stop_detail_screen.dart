@@ -133,7 +133,7 @@ class StopDetailScreen extends StatelessWidget {
                           const SizedBox(width: AppSpacing.sm),
                           Expanded(
                             child: Text(
-                              '${product.name} x${product.quantity}',
+                              '${product.name} — ${product.quantity} ${product.unit}',
                               softWrap: true,
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),

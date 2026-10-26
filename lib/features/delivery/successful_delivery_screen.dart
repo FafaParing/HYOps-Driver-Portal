@@ -6,7 +6,6 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/confirmation_dialog.dart';
 import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/section_title.dart';
-import '../trips/trip_models.dart';
 import '../trips/trip_state.dart';
 import '../home/home_shell.dart';
 import '../history/history_state.dart';
@@ -25,10 +24,6 @@ class SuccessfulDeliveryScreen extends StatefulWidget {
 class _SuccessfulDeliveryScreenState extends State<SuccessfulDeliveryScreen> {
   @override
   Widget build(BuildContext context) {
-    final products = <TripProduct>[
-      const TripProduct(name: 'Standard delivery kit', quantity: 1),
-    ];
-
     return Scaffold(
       appBar: AppBar(title: const Text('Successful Delivery')),
       body: SafeArea(
@@ -49,11 +44,23 @@ class _SuccessfulDeliveryScreenState extends State<SuccessfulDeliveryScreen> {
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Text(
+                    'Receiver',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    widget.result.receiverName,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
                     'Items to hand over',
                     style: Theme.of(context).textTheme.titleSmall,
                   ),
                   const SizedBox(height: AppSpacing.xs),
-                  ...products.map(
+                  ...widget.result.products.map(
                     (product) => Padding(
                       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                       child: Container(
@@ -88,7 +95,7 @@ class _SuccessfulDeliveryScreenState extends State<SuccessfulDeliveryScreen> {
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    'Qty: ${product.quantity}',
+                                    'Qty: ${product.quantity} ${product.unit}',
                                     style: Theme.of(context).textTheme.bodySmall
                                         ?.copyWith(
                                           color: AppColors.textSecondary,
@@ -138,7 +145,7 @@ class _SuccessfulDeliveryScreenState extends State<SuccessfulDeliveryScreen> {
                       border: Border.all(color: AppColors.border),
                     ),
                     child: const Text(
-                      'All required items are ready to be handed over to the customer.',
+                      '(optional)',
                       style: TextStyle(color: AppColors.textSecondary),
                     ),
                   ),
@@ -154,18 +161,11 @@ class _SuccessfulDeliveryScreenState extends State<SuccessfulDeliveryScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Timestamp',
+                          'Date and time of delivery',
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                         SizedBox(height: 4),
                         Text('2026-07-21 10:45 AM'),
-                        SizedBox(height: AppSpacing.sm),
-                        Text(
-                          'GPS',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                        SizedBox(height: 4),
-                        Text('3.1493, 101.6958'),
                       ],
                     ),
                   ),
@@ -204,7 +204,10 @@ class _SuccessfulDeliveryScreenState extends State<SuccessfulDeliveryScreen> {
 
                       navigator.pushAndRemoveUntil(
                         MaterialPageRoute(
-                          builder: (context) => const HomeShell(),
+                          builder: (context) => HomeShell(
+                            notificationMessage:
+                                'Delivery completed for ${widget.result.customerName}.',
+                          ),
                         ),
                         (route) => false,
                       );

@@ -6,7 +6,12 @@ import '../trips/trips_screen.dart';
 import 'home_screen.dart';
 
 class HomeShell extends StatefulWidget {
-  const HomeShell({super.key});
+  const HomeShell({
+    super.key,
+    this.notificationMessage,
+  });
+
+  final String? notificationMessage;
 
   @override
   State<HomeShell> createState() => _HomeShellState();
@@ -21,6 +26,21 @@ class _HomeShellState extends State<HomeShell> {
     HistoryScreen(),
     ProfileScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.notificationMessage != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) {
+          return;
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(widget.notificationMessage!)),
+        );
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

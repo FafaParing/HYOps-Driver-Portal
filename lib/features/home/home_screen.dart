@@ -25,6 +25,7 @@ class HomeScreen extends StatelessWidget {
 
         final trip = TripStore.instance.currentTrip;
         final firstName = mockDriver.name.split(' ').first;
+        final lastName = mockDriver.name.split(' ').last;
         final nextStop = trip.stops.firstWhere(
           (stop) => stop.status != 'Delivered',
           orElse: () => trip.stops.first,
@@ -35,6 +36,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               _HomeHeader(
                 firstName: firstName,
+                lastName: lastName,
                 onNotificationsPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
@@ -89,6 +91,7 @@ class _NoTripsState extends StatelessWidget {
         children: [
           _HomeHeader(
             firstName: mockDriver.name.split(' ').first,
+            lastName: mockDriver.name.split(' ').last,
             onNotificationsPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -126,7 +129,6 @@ class _NoTripsState extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'You have completed all assigned deliveries. '
                   'New trips will appear here when they are assigned.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -147,10 +149,12 @@ class _NoTripsState extends StatelessWidget {
 class _HomeHeader extends StatelessWidget {
   const _HomeHeader({
     required this.firstName,
+    required this.lastName,
     required this.onNotificationsPressed,
   });
 
   final String firstName;
+  final String lastName;
   final VoidCallback onNotificationsPressed;
 
   @override
@@ -180,7 +184,7 @@ class _HomeHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Good morning, $firstName',
+                '$firstName $lastName',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontSize: 17,
                   letterSpacing: -0.2,
@@ -432,7 +436,7 @@ class _ProductLine extends StatelessWidget {
             ),
           ),
           Text(
-            'x${product.quantity}',
+            '${product.quantity} ${product.unit}',
             style: const TextStyle(
               color: AppColors.primary,
               fontSize: 12,

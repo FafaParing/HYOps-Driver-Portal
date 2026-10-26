@@ -20,7 +20,7 @@ extension DeliveryWorkflowStateDetails on DeliveryWorkflowState {
       case DeliveryWorkflowState.loading:
         return 'Loading';
       case DeliveryWorkflowState.readyForDispatch:
-        return 'Ready for dispatch';
+        return 'Ready to ship';
       case DeliveryWorkflowState.inTransit:
         return 'In transit';
       case DeliveryWorkflowState.arrived:
@@ -66,6 +66,8 @@ extension DeliveryWorkflowStateDetails on DeliveryWorkflowState {
       case 'loading':
         return DeliveryWorkflowState.loading;
       case 'ready for dispatch':
+      case 'ready to ship':
+      case 'ready_for_dispatch':
         return DeliveryWorkflowState.readyForDispatch;
       case 'in progress':
       case 'navigating':
@@ -116,10 +118,15 @@ class TripStop {
 }
 
 class TripProduct {
-  const TripProduct({required this.name, required this.quantity});
+  const TripProduct({
+    required this.name,
+    required this.quantity,
+    required this.unit,
+  });
 
   final String name;
   final int quantity;
+  final String unit;
 }
 
 class TripDetail {

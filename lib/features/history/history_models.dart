@@ -6,8 +6,10 @@ class HistoryEntry {
     required this.status,
     required this.kind,
     required this.tripId,
+    required this.receiverName,
     required this.products,
     required this.address,
+    required this.deliveryDate,
     required this.deliveryTime,
     required this.receiptNumber,
     this.reason,
@@ -19,8 +21,10 @@ class HistoryEntry {
   final String status;
   final String kind;
   final String tripId;
+  final String receiverName;
   final List<String> products;
   final String address;
+  final String deliveryDate;
   final String deliveryTime;
   final String receiptNumber;
   final String? reason;

@@ -5,7 +5,6 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/section_title.dart';
 import '../../core/widgets/status_chip.dart';
-import 'route_overview_placeholder.dart';
 import 'trip_models.dart';
 
 class TripDetailScreen extends StatelessWidget {
@@ -91,22 +90,23 @@ class TripDetailScreen extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  ...DeliveryWorkflowState.values.map(
-                    (state) => _TimelineStep(
-                      label: state.label,
-                      isDone: _isWorkflowStepDone(trip.workflowState, state),
-                    ),
-                  ),
+                  ...DeliveryWorkflowState.values
+                      .skipWhile(
+                        (state) =>
+                            state != DeliveryWorkflowState.readyForDispatch,
+                      )
+                      .map(
+                        (state) => _TimelineStep(
+                          label: state.label,
+                          isDone: _isWorkflowStepDone(
+                            trip.workflowState,
+                            state,
+                          ),
+                        ),
+                      ),
                 ],
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
-            RouteOverviewPlaceholder(
-              driverPositionLabel: trip.currentStop,
-              warehouseLabel: trip.warehouse,
-              stopCount: trip.totalStops,
-            ),
-            const SizedBox(height: AppSpacing.md),
             SectionTitle(title: 'Stop List', actionLabel: null),
             const SizedBox(height: AppSpacing.sm),
             ...trip.stops.map(

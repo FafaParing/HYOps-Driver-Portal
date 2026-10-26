@@ -219,18 +219,25 @@ class _HistoryEntryCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    entry.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                  const SizedBox(height: 6),
-                  StatusChip(
-                    label: entry.status,
-                    variant: entry.kind == 'completed'
-                        ? StatusChipVariant.success
-                        : StatusChipVariant.danger,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          entry.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      StatusChip(
+                        label: entry.status,
+                        variant: entry.kind == 'completed'
+                            ? StatusChipVariant.success
+                            : StatusChipVariant.danger,
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -275,22 +282,27 @@ class _HistoryReceiptScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    entry.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleLarge,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          entry.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      StatusChip(
+                        label: entry.status,
+                        variant: entry.kind == 'completed'
+                            ? StatusChipVariant.success
+                            : StatusChipVariant.danger,
+                      ),
+                    ],
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: StatusChip(
-                      label: entry.status,
-                      variant: entry.kind == 'completed'
-                          ? StatusChipVariant.success
-                          : StatusChipVariant.danger,
-                    ),
-                  ),
                   const SizedBox(height: AppSpacing.sm),
                   Text(
                     'Receipt ${entry.receiptNumber}',
@@ -300,29 +312,66 @@ class _HistoryReceiptScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.md),
                   _ReceiptRow(label: 'Trip ID', value: entry.tripId),
+                  _ReceiptRow(label: 'Receiver', value: entry.receiverName),
                   _ReceiptRow(label: 'Address', value: entry.address),
-                  _ReceiptRow(label: 'Time', value: entry.deliveryTime),
+                  _ReceiptRow(
+                    label: 'Date and time',
+                    value: '${entry.deliveryDate} ${entry.deliveryTime}',
+                  ),
                   const SizedBox(height: AppSpacing.md),
                   Text('Items', style: Theme.of(context).textTheme.titleSmall),
                   const SizedBox(height: AppSpacing.sm),
-                  ...entry.products.map(
-                    (product) => Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Icon(Icons.inventory_2_outlined, size: 18),
-                          const SizedBox(width: AppSpacing.sm),
-                          Expanded(child: Text(product, softWrap: true)),
-                        ],
-                      ),
+                  if (entry.products.isEmpty)
+                    const Text(
+                      'No products recorded',
+                      style: TextStyle(color: AppColors.textSecondary),
+                    )
+                  else
+                    ...entry.products.map(
+                      (product) => _ReceiptProductRow(product: product),
                     ),
-                  ),
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ReceiptProductRow extends StatelessWidget {
+  const _ReceiptProductRow({required this.product});
+
+  final String product;
+
+  @override
+  Widget build(BuildContext context) {
+    final separatorIndex = product.lastIndexOf(' x');
+    final name = separatorIndex == -1
+        ? product
+        : product.substring(0, separatorIndex);
+    final quantity = separatorIndex == -1
+        ? 'Not recorded'
+        : product.substring(separatorIndex + 2);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.inventory_2_outlined, size: 18),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(child: Text(name, softWrap: true)),
+          const SizedBox(width: AppSpacing.sm),
+          Text(
+            quantity == 'Not recorded' ? quantity : 'Qty: $quantity',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }
