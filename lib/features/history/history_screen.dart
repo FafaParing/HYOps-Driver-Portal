@@ -303,7 +303,6 @@ class _HistoryReceiptScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  const SizedBox(height: AppSpacing.sm),
                   Text(
                     'Receipt ${entry.receiptNumber}',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
